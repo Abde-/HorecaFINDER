@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 		<title>HorecaFINDER</title>
 		<meta charset="utf-8" />
 	</head>
@@ -12,13 +13,13 @@
 
 		<?php
 			// ce code va include les menus etc -> à mettre dans chaque page
-			include("include/entete.php");
-			include("include/menus.php");
-		?>
+			include("./include/entete.php");
+			include("./include/menus.php");
 
-		<?php
 			echo 'hello hello hello'; 
 		?>
+
+
 
 	<!-- Bootstrap core JavaScript
 	================================================== -->
