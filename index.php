@@ -16,7 +16,10 @@
 			include("./include/entete.php");
 			include("./include/menus.php");
 
-			echo 'hello hello hello'; 
+			echo 'hello hello hello <br />';
+			if (isset($_POST['email'])){
+				echo 'hello ' . $_POST['email'];
+			} 
 		?>
 
 

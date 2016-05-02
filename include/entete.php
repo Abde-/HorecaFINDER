@@ -4,7 +4,7 @@
 		<div class="navbar-header">
 
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
+			<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -19,39 +19,19 @@
 				<li class="active"><a href="#">Home</a></li>
 				<li><a href="#about">À propos</a></li>
 				<li><a href="#contact">Contact</a></li>
-				<li class="dropdown">
-				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Compte <b class="caret"></b></a>
-				    
-				    <ul class="dropdown-menu">
-						<li><a href="#">Action</a></li>
-						<li><a href="#">Another action</a></li>
-						<li><a href="#">Something else here</a></li>
-						<li class="divider"></li>
-						<li class="dropdown-header">Administration</li>
-						<li><a href="#">Créer nouveau établissement</a></li>
-						<li><a href="#">Voir mes établissements</a></li>
-					</ul>
 				
-				</li>
-
-				<!-- dans le cas ou guest arrive -->
-				<li class="dropdown">
-				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login <b class="caret"></b></a>
-				    <!-- style ici pour l'espace à l'exterieur du login -->
-				    <div class="dropdown-menu", style="padding: 15px; padding-bottom: 15px;">	
-				    	<form role="form-inline">
-							<div class="form-group">
-								<label for="email">Adresse e-mail:</label>
-								<input type="email" class="form-control" id="email">
-							</div>
-							<div class="form-group">
-								<label for="pwd">Mot de passe:</label>
-								<input type="password" class="form-control" id="pwd">
-							</div>
-							<button type="submit" class="btn btn-default">Envoyer</button>
-						</form>
-					</div>
-				</li>
+				<?php
+				// dans le cas dun login
+				if (isset($_POST['email'])){
+					include("./include/menuLogged.php");
+				}
+				// dans le cas ou guest arrive
+				else{
+					include("./include/menuGuest.php");
+				}
+ 
+				
+				?>			
 			
 			</ul>
 

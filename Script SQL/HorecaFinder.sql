@@ -21,8 +21,8 @@ CREATE TABLE Etablissement (
     Createur                    VARCHAR(30) NOT NULL,
     DateCreation                DATE        NOT NULL,               
 
-    PRIMARY KEY (Nom)
-    FOREIGN KEY (Createur) REFERENCES Administrateur(UID)
+    PRIMARY KEY (Nom),
+    FOREIGN KEY (Createur) REFERENCES Administrateur(UID),
     CONSTRAINT check_type CHECK (Type IN ('Hotel', 'Restaurant', 'Bar'))
 );
 
@@ -33,10 +33,10 @@ CREATE TABLE Hotel (
     NombreChambres              SMALLINT    NOT NULL,
     PrixNuit                    SMALLINT    NOT NULL,
 
-    PRIMARY KEY (Nom)
-    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom)
-    CONSTRAINT check_etoiles CHECK (NombreEtoiles >= 0 AND NombreEtoiles <= 5)
-    CONSTRAINT check_chambres CHECK (NombreChambres >= 0)
+    PRIMARY KEY (Nom),
+    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
+    CONSTRAINT check_etoiles CHECK (NombreEtoiles >= 0 AND NombreEtoiles <= 5),
+    CONSTRAINT check_chambres CHECK (NombreChambres >= 0),
     CONSTRAINT check_etoiles CHECK (PrixNuit >= 0)
 );
 
@@ -48,9 +48,9 @@ CREATE TABLE Restaurant (
     Emporter                    BOOLEAN     NOT NULL,
     Livraison                   BOOLEAN     NOT NULL,
 
-    PRIMARY KEY (Nom)
-    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom)
-    CONSTRAINT check_fourchette CHECK (FourchettePrixPlat >= 0)
+    PRIMARY KEY (Nom),
+    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
+    CONSTRAINT check_fourchette CHECK (FourchettePrixPlat >= 0),
     CONSTRAINT check_places CHECK (PlacesMax >= 0)
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE Bar (
     Fumeur                      BOOLEAN     NOT NULL,
     Snack                       BOOLEAN     NOT NULL,
 
-    PRIMARY KEY (Nom)
+    PRIMARY KEY (Nom),
     FOREIGN KEY (Nom) REFERENCES Etablissement(Nom)
 );
 
@@ -70,9 +70,9 @@ CREATE TABLE Fermeture (
     Jour                        SMALLINT(1) NOT NULL,
     Heure                       VARCHAR(2)  NOT NULL,
 
-    PRIMARY KEY (Nom, Jour, Heure)
-    FOREIGN KEY (Nom) REFERENCES Restaurant(Nom)
-    CONSTRAINT check_jour CHECK (Jour >= 0 AND Jour <= 6)
+    PRIMARY KEY (Nom, Jour, Heure),
+    FOREIGN KEY (Nom) REFERENCES Restaurant(Nom),
+    CONSTRAINT check_jour CHECK (Jour >= 0 AND Jour <= 6),
     CONSTRAINT check_heure CHECK (Heure IN ('am', 'pm'))             
 );
 
@@ -83,15 +83,15 @@ CREATE TABLE Utilisateur (
     MotDePasse                  VARCHAR(50) NOT NULL,
     DateEnregistrement          DATE        NOT NULL,
 
-    PRIMARY KEY (UID)
-    SECONDARY KEY (Email)
+    PRIMARY KEY (UID),
+    KEY (Email)
 );
 
 
 CREATE TABLE Administrateur (
     UID                         VARCHAR(30) NOT NULL,
     
-    PRIMARY KEY (UID)
+    PRIMARY KEY (UID),
     FOREIGN KEY (UID) REFERENCES Utilisateur(UID)
 );        
 
@@ -104,10 +104,10 @@ CREATE TABLE Commentaire (
     UID                         VARCHAR(30) NOT NULL,
     Nom                         VARCHAR(75) NOT NULL,
     
-    PRIMARY KEY (UID, Nom, DateCommentaire)
-    FOREIGN KEY (UID) REFERENCES Utilisateur(UID)
-    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom)
-    CONSTRAINT check_score CHECK (Score >= 0 AND Score <= 10)
+    PRIMARY KEY (UID, Nom, DateCommentaire),
+    FOREIGN KEY (UID) REFERENCES Utilisateur(UID),
+    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
+    CONSTRAINT check_score CHECK (Score >= 0 AND Score <= 10),
     CONSTRAINT check_texte CHECK (char_length(Texte) >= 100)  -- un commentaire de moins de 100 caractère est bidon
     -- CONSTRAINT check_date  CHECK (DateCommentaire >= Etablissement(Nom).DateCreation
 );
@@ -125,9 +125,9 @@ CREATE TABLE Labelise (
     Nom                         VARCHAR(75) NOT NULL,
     Label                       VARCHAR(15) NOT NULL,
     
-    PRIMARY KEY (UID, Nom, Label)
-    FOREIGN KEY (UID) REFERENCES Utilisateur(UID)
-    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom)
+    PRIMARY KEY (UID, Nom, Label),
+    FOREIGN KEY (UID) REFERENCES Utilisateur(UID),
+    FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
     FOREIGN KEY (Label) REFERENCES Tag(Label)
 );
 
