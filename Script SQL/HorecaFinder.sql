@@ -33,7 +33,6 @@ CREATE TABLE Hotel (
     NombreChambres              SMALLINT    NOT NULL,
     PrixNuit                    SMALLINT    NOT NULL,
 
-    PRIMARY KEY (Nom),
     FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
     CONSTRAINT check_etoiles CHECK (NombreEtoiles >= 0 AND NombreEtoiles <= 5),
     CONSTRAINT check_chambres CHECK (NombreChambres >= 0),
@@ -48,7 +47,6 @@ CREATE TABLE Restaurant (
     Emporter                    BOOLEAN     NOT NULL,
     Livraison                   BOOLEAN     NOT NULL,
 
-    PRIMARY KEY (Nom),
     FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
     CONSTRAINT check_fourchette CHECK (FourchettePrixPlat >= 0),
     CONSTRAINT check_places CHECK (PlacesMax >= 0)
@@ -60,7 +58,6 @@ CREATE TABLE Bar (
     Fumeur                      BOOLEAN     NOT NULL,
     Snack                       BOOLEAN     NOT NULL,
 
-    PRIMARY KEY (Nom),
     FOREIGN KEY (Nom) REFERENCES Etablissement(Nom)
 );
 
