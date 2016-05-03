@@ -17,7 +17,6 @@ CREATE TABLE Etablissement (
     Coordonnees_Latitude        VARCHAR(25),
     Telephone                   VARCHAR(25) NOT NULL,
     SiteWeb                     VARCHAR(75),
-    Type                        VARCHAR(10) NOT NULL,
     Createur                    VARCHAR(30) NOT NULL,
     DateCreation                DATE        NOT NULL,               
 
@@ -90,10 +89,10 @@ CREATE TABLE Utilisateur (
 
 CREATE TABLE Administrateur (
     UID                         VARCHAR(30) NOT NULL,
-    
+
     PRIMARY KEY (UID),
     FOREIGN KEY (UID) REFERENCES Utilisateur(UID)
-);        
+);
 
 
 CREATE TABLE Commentaire (
