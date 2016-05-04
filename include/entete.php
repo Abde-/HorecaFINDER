@@ -30,8 +30,7 @@
 					include("./include/menuGuest.php");
 				}
  
-				
-				?>			
+				?>
 			
 			</ul>
 

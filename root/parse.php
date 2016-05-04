@@ -11,6 +11,7 @@ $restaurants = $myXML->xpath("/Restaurants/Restaurant");
 $database = new mysqli("localhost","root","","horecafinder"); 
 
 // requetes se font dans chaque fonction
+insert_users($database,$restaurants);
 insert_restos($database,$restaurants);
 
 ?>
