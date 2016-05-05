@@ -21,8 +21,9 @@
 				<li><a href="#contact">Contact</a></li>
 				
 				<?php
+				
 				// dans le cas dun login
-				if (isset($_POST['email'])){
+				if (isset($_SESSION['email'])){
 					include("./include/menuLogged.php");
 				}
 				// dans le cas ou guest arrive

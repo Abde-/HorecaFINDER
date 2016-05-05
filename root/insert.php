@@ -28,7 +28,7 @@ function insert_users($database,$etablissements){
 		if (isset($etablissement->Tags)){
 			foreach($etablissement->Tags->Tag as $tag){
 				foreach($tag->User as $user){
-					$values = "(\"" . $user['nickname'] . "\",\"" . $comment['nickname']
+					$values = "(\"" . $user['nickname'] . "\",\"" . $user['nickname']
 					. "@horecafinder.com\", \"MotDePasse\",20000101)";
 
 					$requete = "INSERT INTO `Utilisateur` VALUES " . $values . ";" ;
