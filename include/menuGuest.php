@@ -4,8 +4,7 @@
     <div class="dropdown-menu", style="padding: 15px; padding-bottom: 15px;">	
     	<form role="form-inline" method="post">
 			<div class="form-group">
-				<label for="email">Username / e-mail:</label>
-				<!-- a verifier si mail ou username en cherchant le mail -->
+				<label for="username">Username / e-mail:</label>
 				<input name="username" class="form-control" id="username">
 			</div>
 
@@ -21,6 +20,12 @@
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign up <b class="caret"></b></a>
 	<div class="dropdown-menu", style="padding: 15px; padding-bottom: 15px;">
-
+    	<form role="form-inline" method="post">
+			<div class="form-group">
+				<label for="pwd">Password:</label>
+				<input type="password" name = "pwd" class="form-control" id="pwd">
+				<input type="password" name = "pwd" class="form-control" id="pwd">
+			</div>
+		</form>
 	</div>
 </li>
