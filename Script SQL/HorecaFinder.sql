@@ -67,7 +67,8 @@ CREATE TABLE Bar (
 CREATE TABLE Fermeture (
     Nom                         VARCHAR(75) NOT NULL,
     Jour                        SMALLINT(1) NOT NULL,
-    Heure                       VARCHAR(2)  NOT NULL,
+    Heure                       VARCHAR(2),          -- si l'etablissement fermé toute la journée
+    -- l'heure n'est pas indiquée -> null
 
     PRIMARY KEY (Nom, Jour, Heure),
     FOREIGN KEY (Nom) REFERENCES Restaurant(Nom),
