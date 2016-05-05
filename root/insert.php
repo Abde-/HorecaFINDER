@@ -1,16 +1,12 @@
-<?php // fonctions pour insertion-> une fonction par table
+<?php
 
-/*	dans toutes les fonctions on suppose que les XML
-	sont bien faits, donc pas de vérification si
-	la donnée en soit est déjà dans la DB
-
-	TODO:
-	- Hotel -> nope in XML
-	- Bar
-	- Administrateur -> nope in XML
-	- Commentaire
-	- Tag
-	- Labelise
+/*  
+ *  Abdeselam El-Haman  et  Cédric Simar
+ *  INFO-H-303 : Bases de données - Projet Horeca (partie 2)
+ * 
+ *  PHP avec les fonctions pour parser le XML
+ *
+ *	-> à proteger avec mdp
 */
 
 function insert_users($database,$etablissements){
@@ -36,12 +32,29 @@ function insert_users($database,$etablissements){
 					. "@horecafinder.com\", \"MotDePasse\",20000101)";
 
 					$requete = "INSERT INTO `Utilisateur` VALUES " . $values . ";" ;
+					
 					echo $requete . '</br>';
 					$database->query($requete);
 				}
 			}
 		}
 
+	}
+}
+
+function insert_comments($database,$etablissements){
+	foreach($etablissements as $etablissement){
+		if (isset($etablissement->Comments)){
+			foreach($etablissement->Comments->Comment as $comment){
+				$values = "(" . $comment['score'] . ",\"" . $comment .
+						"\"," . date('Ymd', strtotime($comment['date'])) . 
+						",\"" . $comment['nickname'] . "\",\"" . $etablissement->Informations->Name
+						. "\")";
+				$requete = "INSERT INTO `Commentaire` VALUES " . $values . ";" ;
+				echo $requete . '</br>';
+				$database->query($requete);
+			}
+		}
 	}
 }
 
@@ -77,10 +90,35 @@ function insert_etabl($database,$etablissements){
 			strtotime($etablissement['creationDate'])) . ")";
 
 		$requete = "INSERT INTO `Etablissement` VALUES " . $values . ";";
-		$database->query($requete);
+		
 		echo "$requete </br>";
+		$database->query($requete);
 	}
 }
+
+function insert_bars($database,$bars){
+	foreach($bars as $bar){
+		$info = $bar->Informations;
+		$values = "(\"" . $info->Name . "\",";
+		if (isset($info->Smoking)){
+			$values .=  "TRUE" . ","; 
+		} else {
+			$values .=  "FALSE" . ",";
+		}
+
+		if (isset($info->Snack)){
+			$values .=  "TRUE" . ")"; 
+		} else {
+			$values .=  "FALSE" . ")";
+		}
+
+		$requete = "INSERT INTO `Bar` VALUES " . $values . ";" ;
+		
+		echo "$requete </br>";
+		$database->query($requete);
+	}
+}
+
 
 function insert_restos($database,$restaurants){
 
@@ -101,7 +139,7 @@ function insert_restos($database,$restaurants){
 			$values .=  "FALSE)";
 		}
 
-		$requete = "INSERT INTO `Restaurant` " . "VALUES " . $values . ";" ;
+		$requete = "INSERT INTO `Restaurant` VALUES " . $values . ";" ;
 		
 		// output de test
 		echo $requete . '</br>';
@@ -124,17 +162,55 @@ function insert_fermeture($database,$etablissements){
 				
 				$values = "(\"" . $etablissement->Informations->Name . "\"," . 
 				$day . "," . $hour . ")";
-				$requete = "INSERT INTO `Fermeture` " . "VALUES " . $values . ";" ;
+				$requete = "INSERT INTO `Fermeture` VALUES " . $values . ";" ;
+				
 				echo $requete . '</br>';
+				$output = $database->query($requete);
 			}
 		}
 	}
 }
 
-function insert_tags($database,$etablissement){
+function insert_tags($database,$etablissements){
 	// tags + labelise insérés dans cette fonction
-	
+	foreach ($etablissements as $etablissement) {
+		if(isset($etablissement->Tags)){
+			$tags = $etablissement->Tags->Tag;
+			foreach($tags as $tag){
+				// for tag
+				$values = "(\"" . $tag['name'] . "\")";
+				$requete = "INSERT INTO `Tag` VALUES " . $values . ";";
+				$database->query($requete);
+				
+				// for labelise
+				foreach($tag->User as $user){
+					$username = $user['nickname'];
+					$values = "(\"" . $username . "\",\"" . $etablissement->Informations->Name . 
+							"\",\"" . $tag['name'] . "\")";
+				
+				$requete = "INSERT INTO `Labelise` VALUES " . $values . ";";
 
+				echo $requete . '</br>';
+				$database->query($requete);
+				}
+
+			}
+		}
+	}
+
+}
+
+function createTables($database){
+	/* 
+	prend le fichier sql et fait requete pour créer les 
+	tables dans la database recemment créée
+	*/
+	$tables = file_get_contents('../ScriptSQL/HorecaFinder.sql');
+	echo $tables;
+
+	// haha!!! cette méthode existe pour envoyer toute les requetes d'un coup
+	// salut renato :P
+	$database->multi_query($tables);
 }
 
 ?>
