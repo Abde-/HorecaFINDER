@@ -30,7 +30,6 @@
 	}
 
 	// if signup
-	// todo-> checkbox pour dire si admin ou pas
 	if((isset($_POST['usersign'])) and ($_POST['usersign'] !== "")
 		and ($_POST['pwd1sign'] == $_POST['pwd2sign'])){
 		$database = new mysqli("localhost","root","","horecafinder");

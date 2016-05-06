@@ -22,8 +22,6 @@
 
 		<!-- tout ça c'est à bouger dans un autre php,
 			 index aura que des include en fait :'D -->
-
-
 		<?php
 			// verification des login dans login.php
 			include("./include/login.php");
@@ -32,6 +30,8 @@
 			include("./include/entete.php");
 			include("./include/menus.php");
 		?>
+
+		<!-- Mettre jumbotron pour info initiale -->
 
 
 
