@@ -19,6 +19,7 @@
 		$requete = "SELECT " . $variable . ", U.MotDePasse FROM Utilisateur U
 						WHERE " . $variable . " = \"" . $_POST['username'] . "\";";
 		$output = $database->query($requete);
+		
 		// prendre requete et checker si bon username
 		if($row = $output->fetch_assoc()){
 			if ($row['MotDePasse'] == $_POST['pwd']){
