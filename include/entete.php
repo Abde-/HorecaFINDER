@@ -23,7 +23,7 @@
 				<?php
 				
 				// dans le cas dun login
-				if (isset($_SESSION['email'])){
+				if (isset($_SESSION['username'])){
 					include("./include/menuLogged.php");
 				}
 				// dans le cas ou guest arrive

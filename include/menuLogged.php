@@ -1,5 +1,8 @@
 <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Compte <b class="caret"></b></a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    		<?php echo $_SESSION['username'] ?>
+    		<b class="caret"></b>
+    </a>
     	
 	<ul class="dropdown-menu">
 		<li><a href="#">Action</a></li>

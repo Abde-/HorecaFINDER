@@ -1,3 +1,11 @@
+<!--
+ *  Abdeselam El-Haman  et  Cédric Simar
+ *  INFO-H-303 : Bases de données - Projet Horeca (partie 2) 
+ * 
+ *  PHP pour checker le login ou signup de l'user
+ *	
+ -->
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -14,30 +22,12 @@
 
 		<!-- tout ça c'est à bouger dans un autre php,
 			 index aura que des include en fait :'D -->
-		<?php
-			// if login
-			if (isset($_POST['username'])){
-				$variable = "U.UID";
 
-
-				if(strpos($_POST['username'], '@') !== FALSE){
-					$variable = "U.Email";
-				}
-
-				$database = new mysqli("localhost","root","","horecafinder");
-				$requete = "SELECT " . $variable . ", U.MotDePasse FROM Utilisateur U
-								WHERE " . $variable . " = \"" . $_POST['username'] . "\";";
-				$output = $database->query($requete);
-
-				// encore test -> à finir
-
-				// prendre requete et checker si bon username
-			}
-
-			// if signup -> TODO
-		?>
 
 		<?php
+			// verification des login dans login.php
+			include("./include/login.php")
+
 			// ce code va include les menus etc -> à mettre dans chaque page
 			include("./include/entete.php");
 			include("./include/menus.php");
