@@ -10,7 +10,7 @@
 */
 
 	// if login
-	if (isset($_POST['username'])){
+	if ((isset($_POST['username'])) and ($_POST['username'] !== "")){
 		$variable = "U.UID";
 		if(strpos($_POST['username'], '@') !== FALSE){
 			$variable = "U.Email";
@@ -28,5 +28,26 @@
 			}
 		}
 	}
-	// if signup -> TODO
+
+	// if signup
+	// todo-> checkbox pour dire si admin ou pas
+	if((isset($_POST['usersign'])) and ($_POST['usersign'] !== "")
+		and ($_POST['pwd1sign'] == $_POST['pwd2sign'])){
+		$database = new mysqli("localhost","root","","horecafinder");
+
+		// verifier que ça existe déjà
+		$requete = "SELECT * FROM Utilisateur U
+					WHERE U.Email = \"" . $_POST['pwd1sign'] ."\" OR U.UID = \"". $_POST['usersign'] . "\";";
+		echo $requete;
+		$output = $database->query($requete);
+		
+		if($output->num_rows == 0){
+			$values = "(\"". $_POST['usersign'] . "\",\"" . $_POST['emailsign'] . "\",\"" .
+					  $_POST['pwd1sign'] . "\"," . date('Ymd',time()) . ");";
+			$requete = "INSERT INTO `Utilisateur` 
+						VALUES " . $values;
+			$output = $database->query($requete);
+		}
+	}
+
 ?>
