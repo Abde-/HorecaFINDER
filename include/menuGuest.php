@@ -40,6 +40,10 @@
 				<label for="username">E-mail:</label>
 				<input type="email" name="emailsign" class="form-control" id="emailsign">
 			</div>
+			<div class="checkbox">
+				<label><input type="checkbox" value="" name="admin">Admin?</label>
+			</div>
+
 			<button type="submit" class="btn btn-default">Envoyer</button>
 		</form>
 	</div>

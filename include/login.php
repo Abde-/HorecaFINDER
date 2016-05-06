@@ -38,7 +38,6 @@
 		// verifier que ça existe déjà
 		$requete = "SELECT * FROM Utilisateur U
 					WHERE U.Email = \"" . $_POST['pwd1sign'] ."\" OR U.UID = \"". $_POST['usersign'] . "\";";
-		echo $requete;
 		$output = $database->query($requete);
 		
 		if($output->num_rows == 0){
@@ -47,6 +46,10 @@
 			$requete = "INSERT INTO `Utilisateur` 
 						VALUES " . $values;
 			$output = $database->query($requete);
+			if (isset($_POST['admin'])){
+				$output = $database->query("INSERT INTO `Administrateur` 
+											VALUES (\"". $_POST['usersign'] ."\");");
+			}
 		}
 	}
 
