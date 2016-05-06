@@ -38,7 +38,11 @@ function insert_users($database,$etablissements){
 				}
 			}
 		}
-
+	// add admin associé à l'etablissement
+	$requete = "INSERT INTO `Administrateur` VALUES (\"" . $etablissement['nickname'] . "\")";
+		
+	echo $requete . '</br>';
+	$database->query($requete);
 	}
 }
 
@@ -46,8 +50,13 @@ function insert_comments($database,$etablissements){
 	foreach($etablissements as $etablissement){
 		if (isset($etablissement->Comments)){
 			foreach($etablissement->Comments->Comment as $comment){
-				$values = "(" . $comment['score'] . ",\"" . $comment .
-						"\"," . date('Ymd', strtotime($comment['date'])) . 
+				
+				$dateArray = explode("/",$comment['date']);
+				$newDate = $dateArray[1] . "/" . $dateArray[0] . "/" . $dateArray[2];
+
+				echo $newDate . '</br>';
+				$values = "(" . $comment['score'] . ",\"" . str_replace("\"","``",$comment) .
+						"\"," . date('Ymd', strtotime($newDate)) . 
 						",\"" . $comment['nickname'] . "\",\"" . $etablissement->Informations->Name
 						. "\")";
 				$requete = "INSERT INTO `Commentaire` VALUES " . $values . ";" ;
@@ -86,8 +95,11 @@ function insert_etabl($database,$etablissements){
 			$values .= "NULL" . ",";
 		}
 
+		$dateArray = explode("/",$etablissement['creationDate']);
+		$newDate = $dateArray[1] . "/" . $dateArray[0] . "/" . $dateArray[2]; 
+
 		$values .= "\"" . $etablissement['nickname'] . "\"," . date('Ymd',
-			strtotime($etablissement['creationDate'])) . ")";
+			strtotime($newDate)) . ")";
 
 		$requete = "INSERT INTO `Etablissement` VALUES " . $values . ";";
 		
