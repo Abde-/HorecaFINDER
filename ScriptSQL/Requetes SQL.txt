@@ -1,45 +1,70 @@
-/*  
+﻿/*  
  *  Abdeselam El-Haman  et  Cédric Simar
  *  INFO-H-303 : Bases de données - Projet Horeca (partie 2)
  * 
  *  Requêtes SQL
 */
 
--- R1 : Tous les utilisateurs qui apprécient au moins 3 établissements que l’utilisateur "Brenda" apprécie.
+-- \o/ R1 : Tous les utilisateurs qui apprécient au moins 3 établissements que l’utilisateur "Brenda" apprécie.
 
-SELECT C1.UID FROM Commentaire C1
-WHERE COUNT ( SELECT * FROM Commentaire C2
-			  WHERE C1.UID = C2.UID AND C2.Score >= 4 AND C2.Nom = ANY ( SELECT DISTINCT C3.Nom FROM Commentaire C3		-- ou IN à la place de = ANY ?
-												                         WHERE C3.Score >= 4 AND C3.UID = "Breda" ))
-			>= 3
+SELECT DISTINCT C1.UID FROM Commentaire C1
+WHERE ( SELECT COUNT(*) FROM Commentaire C2
+		WHERE C1.UID = C2.UID 
+		AND C2.UID <> "Brenda"
+		AND C2.Score >= 4 
+		AND C2.Nom = ANY( SELECT DISTINCT C3.Nom FROM Commentaire C3		-- ou IN à la place de = ANY ?
+						  WHERE C3.Score >= 4 AND C3.UID = "Brenda" ))
+	>= 3
 			
 -- R2 : Tous les établissements qu’apprécie au moins un utilisateur qui apprécie tous les établissements que "Brenda" apprécie.
 
--- R3 : Tous les établissements pour lesquels il y a au plus un commentaire.
+SELECT DISTINCT C1.Nom FROM Commentaire C1
+WHERE ALL( SELECT C2.Nom FROM Commentaire C2
+			WHERE C2.Nom = C1.Nom
+			AND C2.UID <> "Brenda"
+			AND C2.Score >= 4 )
+	>= COUNT( )
+	  ( SELECT DISTINCT C3.Nom FROM Commentaire C3
+	  WHERE C3.Score >= 4 AND C3.UID = "Brenda" )
 
-SELECT C.Nom FROM Commentaire C
-GROUP BY C.Nom
-HAVING COUNT(*) < 2
+-- \o/ R3 : Tous les établissements pour lesquels il y a au plus un commentaire.
 
--- R4 : La liste des administrateurs n’ayant pas commenté tous les établissements qu’ils ont crées.
+SELECT * FROM Etablissement E
+WHERE E.Nom IN 
+	(SELECT C.Nom FROM Commentaire C
+	GROUP BY C.Nom
+	HAVING COUNT(*) < 2)
 
-SELECT E.Createur FROM Etablissements E
-GROUP BY E.Createur
-HAVING COUNT (DISTINCT E.Nom) <> COUNT(SELECT DISTINCT C.Nom FROM Commentaire C   -- distinct car si plusieurs commentaires pour le même établissement
-									   WHERE C.UID = E.Createur)		
+-- \o/ R4 : La liste des administrateurs n’ayant pas commenté tous les établissements qu’ils ont crées.
 
--- R5 : La liste des établissements ayant au minimum trois commentaires, classée selon la moyenne des scores attribués.
+SELECT DISTINCT E.Createur FROM Etablissement E
+WHERE NOT EXISTS (SELECT C.UID FROM Commentaire C
+			      WHERE C.Nom = E.Nom
+				  AND C.UID = E.Createur)
 
-SELECT C.Nom, AVG(C.Score) FROM Commentaire C
+-- \o/ R5 : La liste des établissements ayant au minimum trois commentaires, classée selon la moyenne des scores attribués.
+	
+SELECT * FROM Etablissement E, Commentaire C
+WHERE E.Nom = C.Nom
 GROUP BY C.Nom 
-HAVING COUNT (*) >= 3
-ORDER BY AVG(C.Score)
+HAVING COUNT(*) >= 3
+ORDER BY ( SELECT AVG(C2.Score) FROM Commentaire C2
+		   WHERE C.Nom = C2.Nom
+		   GROUP BY C2.Nom
+		   ORDER BY AVG(C2.Score)) DESC
+		   
+/* OLD ONE 
+SELECT C.Nom FROM Commentaire C
+GROUP BY C.Nom 
+HAVING COUNT(*) >= 3
+ORDER BY AVG(C.Score) DESC )
+*/
 
--- R6 : La liste des labels étant appliqués à au moins 5 établissements, classée selon la moyenne des scores des établissements ayant ce label.
+-- \o/ R6 : La liste des labels étant appliqués à au moins 5 établissements, classée selon la moyenne des scores des établissements ayant ce label.
 
 SELECT L.Label FROM Labelise L
 GROUP BY L.Label
-HAVING COUNT(*) >= 5
+HAVING COUNT( DISTINCT L.Nom ) >= 5
 ORDER BY ( SELECT AVG(C.Score) FROM Commentaire C
 		   WHERE C.Nom = L.Nom )
 		
