@@ -1,5 +1,6 @@
 
-<!-- Page où voir les requetes, à faire -->
+<?php session_start(); ?>
+<!-- Page où voir les requetes du prof, à faire -->
 <!DOCTYPE html>
 <html>
 	<head>

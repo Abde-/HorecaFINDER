@@ -11,6 +11,7 @@
 
 	// if login
 	if ((isset($_POST['username'])) and ($_POST['username'] !== "")){
+			
 		$variable = "U.UID";
 		if(strpos($_POST['username'], '@') !== FALSE){
 			$variable = "U.Email";
@@ -24,7 +25,7 @@
 		if($row = $output->fetch_assoc()){
 			if ($row['MotDePasse'] == $_POST['pwd']){
 				// on aurait pu mettre le mail aussi ça revient au meme
-				$_SESSION['username'] = $_POST['username'];
+				$_SESSION['username'] = $row['UID'];
 			}
 		}
 	}

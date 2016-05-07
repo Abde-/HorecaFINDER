@@ -2,13 +2,13 @@
  *  Abdeselam El-Haman  et  Cédric Simar
  *  INFO-H-303 : Bases de données - Projet Horeca (partie 2) 
  * 
- *  PHP pour checker le login ou signup de l'user
+ *  PHP pour voir les etablissements
  *	
  -->
 
  <?php session_start(); ?>
 
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 	<head>
 		<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
@@ -31,13 +31,22 @@
 			include("./include/menus.php");
 		?>
 
-		<!-- Mettre jumbotron pour info initiale -->
-		<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
-			<div class="jumbotron">
-				<h1>HorecaFINDER</h1> 
-				<p>Cédric c'est à toi le bla bla, à toi de changer ça... ou on pourrait mettre la recherche direct?</p> 
+			<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
+				<div class="panel-group">
+
+				<?php
+					$database = new mysqli("localhost","root","","horecafinder");
+					$output = $database->query("SELECT * FROM `Etablissement`;");
+					
+					while($row = $output->fetch_assoc()) {
+						echo "<div class=\"panel panel-default\">";
+						echo "<div class=\"panel-heading\">". $row['Nom'] . "</div>";
+						echo "<div class=\"panel-body\">Info de l'etablissement</div>";
+						echo "</div>";
+					}
+				?>
+				</div>
 			</div>
-		</div>
 
 		<!-- div extra pour le menu -->
 		</div>
