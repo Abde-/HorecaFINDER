@@ -38,50 +38,45 @@
 						<form role="form-inline" method = "post">
 							<div class="form-group">
 								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="resto">Restaurants
+									<input type="checkbox" value="" name="resto"
+									<?php if(isset($_POST['resto'])){ echo " checked";} ?>
+									>Restaurants
 								</label>
 								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="cafe">Cafes
+									<input type="checkbox" value="" name="cafe"
+									<?php if(isset($_POST['cafe'])){ echo " checked";} ?>
+									>Cafes
 								</label>
 								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="hotel">Hotels
+									<input type="checkbox" value="" name="hotel"
+									<?php if(isset($_POST['hotel'])){ echo " checked";} ?>
+									>Hotels
 								</label>
 							</div>
 							<div class="form-group">
-								<label for="usr">Name:</label>
-								<input type="text" class="form-control" name="etabName" id="etabName">
+								<label for="etabName">Name:</label>
+								<input type="text" class="form-control" name="etabName" id="etabName"
+								<?php if(isset($_POST['etabName'])){ echo "value=\"".$_POST['etabName']."\"";} ?>
+								>
 							</div>
 							<div class="form-group">
-								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="snack">Snack
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="smoke">Fumeur
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="delivery">Livraison
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" value="" name="takeAway">À emporter
-								</label>
-							</div>
-
-							<div class="form-group">
-								<label for="prix">Prix < </label>
-								<select class="form-control" name ="prix"id="prix">
-								<?php
-									for($i = 0; $i <= 100; $i += 10)
-									echo "<option>$i</option>"; 
-								?>
-								</select>
+								<label for="ville">Localite:</label>
+								<input type="text" class="form-control" name="ville" id="ville"
+								<?php if(isset($_POST['ville'])){ echo "value=\"".$_POST['ville']."\"";} ?>
+								>
 							</div>
 
 							<div class="form-group">
-								<label for="banquet">Banquet < </label>
-								<select class="form-control" name ="banquet"id="banquet">
+								<label for="comm">Nb commentaires > </label>
+								<select class="form-control" name ="comm"id="comm">
 								<?php
-									for($i = 0; $i <= 100; $i += 10)
-									echo "<option>$i</option>"; 
+									for($i = 0; $i <= 20; $i += 5){
+										echo "<option ";
+										if(isset($_POST['comm']) and ($_POST['comm'] == $i)) {
+											echo "selected";
+										}
+										echo ">$i</option>";
+									}
 								?>
 								</select>
 							</div>
@@ -90,8 +85,13 @@
 								<label for="score">Score moyen >= </label>
 								<select class="form-control" name ="score"id="score">
 								<?php
-									for($i = 0; $i <= 10; $i ++)
-									echo "<option>$i</option>"; 
+									for($i = 0; $i <= 10; $i ++){
+										echo "<option ";
+										if(isset($_POST['score']) and ($_POST['score'] == $i)) {
+											echo "selected";
+										}
+										echo ">$i</option>";
+									}
 								?>
 								</select>
 							</div>
@@ -116,16 +116,93 @@
 				</div>
 
 				<?php
+
+
+					$counter = 0;
+
+					function whereand(){
+						// returns where or and
+						global $counter;
+						if($counter == 0){
+							$counter++;
+							return " WHERE ";
+						} else {
+							return " AND ";
+						}
+					}
+
+
 					$database = new mysqli("localhost","root","","horecafinder");
-					$output = $database->query("SELECT * FROM `Etablissement`;");
+					$requete = "SELECT * FROM `Etablissement` E";
+
+					if(isset($_POST['etabName']) and ($_POST['etabName'] !== "")){
+						$requete .= whereand() . "E.Nom LIKE '%" . $_POST['etabName'] . "%'";
+					}
+
+					if(isset($_POST['ville']) and ($_POST['ville'] !== "")){
+						$requete .= whereand() . "E.Adresse_Localite LIKE '%" . $_POST['ville'] . "%'";
+					}
+
+					if(isset($_POST['comm'])){
+						$requete .= whereand() . "(SELECT COUNT(*) FROM `Commentaire` C WHERE C.Nom = E.Nom)
+													>= " . $_POST['comm']; 
+					}
+
+					if(isset($_POST['score'])){
+						$requete .= whereand() . "(SELECT AVG(C.Score) FROM `Commentaire` C WHERE C.Nom = E.Nom)
+													>= " . $_POST['score']; 
+					}
+
+					if(isset($_POST['resto']) or isset($_POST['cafe']) or isset($_POST['hotel'])){
+						
+						$counterOr = 0;
+						function orEtab(){
+							global $counterOr;
+							if($counterOr == 0){
+								$counterOr++;
+							}
+							else{
+								return " OR ";
+							}
+						}
+
+						$requete .= whereand() . " (";
+						if (isset($_POST['resto'])){ 
+							$requete .= orEtab() .  "E.Nom IN (SELECT R.Nom FROM `Restaurant` R)";
+						}
+						if(isset($_POST['cafe'])){
+							$requete .= orEtab() . "E.Nom IN (SELECT B.Nom FROM `Bar` B)";
+						}
+						if(isset($_POST['hotel'])){
+							$requete .= orEtab() . "E.Nom IN (SELECT H.Nom FROM `Hotel` H)";
+						}
+						$requete.=")";
+					}
+
+					$requete .= ";";
+					echo $requete;
+
+					$output = $database->query($requete );
 					
 					while($row = $output->fetch_assoc()) {
 
 						// some help here for the querys?
 						echo "<div class=\"panel panel-default\">";
-						echo "<div class=\"panel-heading\">". $row['Nom'] . "</div>";
-						echo "<div class=\"panel-body\">Info de l'etablissement</div>";
-						echo "</div>";
+						//echo "<div class=\"panel-heading\"><h4>". $row['Nom'] . "</h4></div>";
+						echo   "<div class=\"panel-heading\">
+								<div class=\"pull-left\">
+  								<h4>" . $row['Nom'] . "</h4>
+  								</div>
+  								<div class=\"pull-right\">
+  								<span class=\"text-right\">This to the right but on the same line</span>
+  								</div>
+  						<div class=\"clearfix\"></div></div>";
+
+						echo "<div class=\"panel-body\"><i>". $row['Adresse_Rue'] . " " . $row['Adresse_Numero']. "</br>";
+						echo $row['Adresse_CodePostal'] . " ". $row['Adresse_Localite'] . "</i></br></br>";
+						echo "Téléphone: " . $row['Telephone'];
+						echo "<div class = \"pull-right\"><p class=\"text-right\">Crée par <i>". $row['Createur'] ." le ". $row['DateCreation']."<i></p>";
+						echo "</div></div></div>";
 					}
 				?>
 				</div>
