@@ -113,7 +113,7 @@ CREATE TABLE Commentaire (
 
 
 CREATE TABLE Tag (
-    Label                       VARCHAR(15) NOT NULL,
+    Label                       VARCHAR(30) NOT NULL,
     
     PRIMARY KEY (Label)
 );
@@ -122,7 +122,7 @@ CREATE TABLE Tag (
 CREATE TABLE Labelise (
     UID                         VARCHAR(30) NOT NULL,
     Nom                         VARCHAR(75) NOT NULL,
-    Label                       VARCHAR(15) NOT NULL,
+    Label                       VARCHAR(30) NOT NULL,
     
     PRIMARY KEY (UID, Nom, Label),
     FOREIGN KEY (UID) REFERENCES Utilisateur(UID),

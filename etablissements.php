@@ -67,6 +67,13 @@
 							</div>
 
 							<div class="form-group">
+								<label for="ville">Tags (séparés par des virgules):</label>
+								<input type="text" class="form-control" name="tags" id="tags"
+								<?php if(isset($_POST['tags'])){ echo "value=\"".$_POST['tags']."\"";} ?>
+								>
+							</div>
+
+							<div class="form-group">
 								<label for="comm">Nb commentaires > </label>
 								<select class="form-control" name ="comm"id="comm">
 								<?php
@@ -85,7 +92,7 @@
 								<label for="score">Score moyen >= </label>
 								<select class="form-control" name ="score"id="score">
 								<?php
-									for($i = 0; $i <= 10; $i ++){
+									for($i = 0; $i <= 5; $i ++){
 										echo "<option ";
 										if(isset($_POST['score']) and ($_POST['score'] == $i)) {
 											echo "selected";
@@ -131,6 +138,17 @@
 						}
 					}
 
+					$counterOr = 0;
+					function orEtab(){
+						global $counterOr;
+						if($counterOr == 0){
+							$counterOr++;
+						}
+						else{
+							return " OR ";
+						}
+					}
+
 
 					$database = new mysqli("localhost","root","","horecafinder");
 					$requete = "SELECT * FROM `Etablissement` E";
@@ -154,17 +172,6 @@
 					}
 
 					if(isset($_POST['resto']) or isset($_POST['cafe']) or isset($_POST['hotel'])){
-						
-						$counterOr = 0;
-						function orEtab(){
-							global $counterOr;
-							if($counterOr == 0){
-								$counterOr++;
-							}
-							else{
-								return " OR ";
-							}
-						}
 
 						$requete .= whereand() . " (";
 						if (isset($_POST['resto'])){ 
@@ -177,6 +184,17 @@
 							$requete .= orEtab() . "E.Nom IN (SELECT H.Nom FROM `Hotel` H)";
 						}
 						$requete.=")";
+					}
+
+					if(isset($_POST['tags']) and $_POST['tags'] !== ""){
+						$counterOr = 0;
+						$requete .= " AND (";
+						foreach(explode(",",$_POST['tags']) as $tag){
+							$requete .= orEtab() . "(SELECT COUNT(*) FROM Labelise L
+													   WHERE L.Label =\"" . trim($tag)."\"
+													   AND L.Nom = E.Nom) > 0";
+						}
+						$requete .= ")";
 					}
 
 					$requete .= ";";
@@ -201,7 +219,9 @@
 						echo "<div class=\"panel-body\"><i>". $row['Adresse_Rue'] . " " . $row['Adresse_Numero']. "</br>";
 						echo $row['Adresse_CodePostal'] . " ". $row['Adresse_Localite'] . "</i></br></br>";
 						echo "Téléphone: " . $row['Telephone'];
-						echo "<div class = \"pull-right\"><p class=\"text-right\">Crée par <i>". $row['Createur'] ." le ". $row['DateCreation']."<i></p>";
+						echo "<div class = \"pull-right\"><p class=\"text-right\">Crée par <i>".
+						"<a href=\"detailUser.php?nom=".$row['Createur']."\">" . $row['Createur'] . "</a>"
+						  ." le ". $row['DateCreation']."<i></p>";
 						echo "</div></div></div>";
 					}
 				?>
