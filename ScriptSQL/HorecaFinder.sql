@@ -21,8 +21,7 @@ CREATE TABLE Etablissement (
     DateCreation                DATE        NOT NULL,               
 
     PRIMARY KEY (Nom),
-    FOREIGN KEY (Createur) REFERENCES Administrateur(UID),
-    CONSTRAINT check_type CHECK (Type IN ('Hotel', 'Restaurant', 'Bar'))
+    FOREIGN KEY (Createur) REFERENCES Administrateur(UID)
 );
 
 
@@ -107,7 +106,7 @@ CREATE TABLE Commentaire (
     PRIMARY KEY (UID, Nom, DateCommentaire),
     FOREIGN KEY (UID) REFERENCES Utilisateur(UID),
     FOREIGN KEY (Nom) REFERENCES Etablissement(Nom),
-    CONSTRAINT check_score CHECK (Score >= 0 AND Score <= 10),
+    CONSTRAINT check_score CHECK (Score >= 0 AND Score <= 5),
     CONSTRAINT check_texte CHECK (char_length(Texte) >= 100)  -- un commentaire de moins de 100 caractère est bidon
     -- CONSTRAINT check_date  CHECK (DateCommentaire >= Etablissement(Nom).DateCreation
 );

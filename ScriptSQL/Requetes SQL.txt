@@ -18,6 +18,30 @@ WHERE ( SELECT COUNT(*) FROM Commentaire C2
 			
 -- R2 : Tous les établissements qu’apprécie au moins un utilisateur qui apprécie tous les établissements que "Brenda" apprécie.
 
+-- users qui ont commenté memes etablissements que brenda a liké 
+SELECT C.Nom FROM (SELECT COUNT(DISTINCT C.Nom) as howMuch, C.Nom, C.UID FROM Commentaire C 
+where C.Nom in (SELECT DISTINCT C3.Nom FROM Commentaire C3
+	  		  WHERE C3.Score >= 4 AND C3.UID = "Brenda"
+              AND C.Nom = C3.Nom)
+group by C.UID) as brendaLike
+WHERE brendaLike.howMuch = (SELECT COUNT(DISTINCT C3.Nom) FROM Commentaire C3
+	  		  WHERE C3.Score >= 4 AND C3.UID = "Brenda")
+
+
+-- ici la query entière :) ça renvoit toues les noms des etablissements en soit
+SELECT DISTINCT C.Nom FROM Commentaire C where C.UID in
+(SELECT brendaLike.UID FROM (SELECT COUNT(DISTINCT C.Nom) as howMuch, C.Nom, C.UID FROM Commentaire C 
+where C.Nom in (SELECT DISTINCT C3.Nom FROM Commentaire C3
+	  		  WHERE C3.Score >= 4 AND C3.UID = "Brenda"
+              AND C.Nom = C3.Nom)
+group by C.UID) as brendaLike
+WHERE brendaLike.howMuch = (SELECT COUNT(DISTINCT C3.Nom) FROM Commentaire C3
+	  		  WHERE C3.Score >= 4 AND C3.UID = "Brenda"))
+AND C.UID <> "Brenda"
+
+
+
+/* OLD ONE 
 SELECT DISTINCT C1.Nom FROM Commentaire C1
 WHERE ALL( SELECT C2.Nom FROM Commentaire C2
 			WHERE C2.Nom = C1.Nom
@@ -26,7 +50,7 @@ WHERE ALL( SELECT C2.Nom FROM Commentaire C2
 	>= COUNT( )
 	  ( SELECT DISTINCT C3.Nom FROM Commentaire C3
 	  WHERE C3.Score >= 4 AND C3.UID = "Brenda" )
-
+*/
 -- \o/ R3 : Tous les établissements pour lesquels il y a au plus un commentaire.
 
 SELECT * FROM Etablissement E
