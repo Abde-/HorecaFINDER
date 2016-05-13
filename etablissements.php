@@ -161,6 +161,7 @@
 						$requete .= whereand() . "E.Adresse_Localite LIKE '%" . $_POST['ville'] . "%'";
 					}
 
+
 					if(isset($_POST['comm'])){
 						$requete .= whereand() . "(SELECT COUNT(*) FROM `Commentaire` C WHERE C.Nom = E.Nom)
 													>= " . $_POST['comm']; 
@@ -200,28 +201,59 @@
 					$requete .= ";";
 					echo $requete;
 
-					$output = $database->query($requete );
+					$output = $database->query($requete);
 					
 					while($row = $output->fetch_assoc()) {
+						$arrayTags = [];
+						$i = 0;
+						$tags = $database->query("SELECT COUNT(*),L.Label from Labelise L
+												  WHERE L.Nom = \"".$row['Nom']."\"
+												  GROUP BY L.Label
+												  ORDER BY COUNT(*) DESC;");
+						while (($tag = $tags->fetch_assoc()) and ($i++ != 5)){
+							// cet array aura les 5 tags les plus populaires
+							array_push($arrayTags,$tag['Label']);
+						}
 
 						// some help here for the querys?
 						echo "<div class=\"panel panel-default\">";
-						//echo "<div class=\"panel-heading\"><h4>". $row['Nom'] . "</h4></div>";
-						echo   "<div class=\"panel-heading\">
+						echo 	"<div class=\"panel-heading\">
 								<div class=\"pull-left\">
-  								<h4>" . $row['Nom'] . "</h4>
+  								<h4><a href=\"detailEtab.php?nom=".$row['Nom']."\">"
+  								 . $row['Nom'] . "</a></h4>
   								</div>
   								<div class=\"pull-right\">
-  								<span class=\"text-right\">This to the right but on the same line</span>
-  								</div>
-  						<div class=\"clearfix\"></div></div>";
+  								<span class=\"text-right\">";
+						foreach($arrayTags as $tag){
+  							echo "<span class=\"label label-default\">". $tag ."</span> ";
+  						}
+  						echo "</span></br>";
+  						
+  						$score = $database->query("SELECT AVG(C.Score) as average from Commentaire C
+  												  WHERE C.Nom = \"" . $row['Nom']."\";");
+  						
+  						echo "<div class=\"pull-right\">";
+  						
+  						$index = 0;
+  						$roundScore = round($score->fetch_assoc()['average']);
+  						while($index < $roundScore){
+  							echo "<span class=\"glyphicon glyphicon-star\" aria-hidden=\"true\"></span>";
+  							$index++;
+  						}
+  						while($index < 5){
+  							echo "<span class=\"glyphicon glyphicon-star-empty\" aria-hidden=\"true\"></span>";
+  							$index++;
+  						}
+
+  						echo "</div>";
+  						echo "</div><div class=\"clearfix\"></div></div>";
 
 						echo "<div class=\"panel-body\"><i>". $row['Adresse_Rue'] . " " . $row['Adresse_Numero']. "</br>";
 						echo $row['Adresse_CodePostal'] . " ". $row['Adresse_Localite'] . "</i></br></br>";
 						echo "Téléphone: " . $row['Telephone'];
 						echo "<div class = \"pull-right\"><p class=\"text-right\">Crée par <i>".
-						"<a href=\"detailUser.php?nom=".$row['Createur']."\">" . $row['Createur'] . "</a>"
-						  ." le ". $row['DateCreation']."<i></p>";
+						"<a href=\"detailUser.php?nom=".$row['Createur']."\"></i>" . $row['Createur'] . "</a>"
+						  ." le ". $row['DateCreation']."</p>";
 						echo "</div></div></div>";
 					}
 				?>
