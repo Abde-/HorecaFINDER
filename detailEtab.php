@@ -63,7 +63,6 @@
 			}
 		?>
 
-		<!-- Mettre jumbotron pour info initiale -->
 		<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
 			<header><h3><?php echo $_GET['nom']; ?></h3></header></br>
 			<div class="panel-body">
@@ -74,6 +73,20 @@
 
 				$type = whatIs($database,$_GET['nom']);
 				
+				$arrayTags = [];
+				$tags = $database->query("SELECT COUNT(*),L.Label from Labelise L
+										  WHERE L.Nom = \"".$_GET['nom']."\"
+										  GROUP BY L.Label
+										  ORDER BY COUNT(*) DESC;");
+				while ($tag = $tags->fetch_assoc()){
+					array_push($arrayTags,$tag['Label']);
+				}
+				
+				foreach($arrayTags as $tag){
+  					echo "<span class=\"label label-default\">". $tag ."</span> ";
+  				}
+  				echo "</br>";
+  				echo "</br>";
 
 				if($type == "Restaurant"){
 					$requete = $database->query("SELECT * FROM Restaurant R WHERE R.Nom = \"" . $_GET['nom'] . "\"");
@@ -147,7 +160,7 @@
 				while ($comment = $comments->fetch_assoc()){
 					echo "<div class=\"panel panel-default\">";
 					echo 	"<div class=\"panel-heading\">";
-					echo		"<h4>" . $comment['UID'] . "</h4>";
+					echo		"<h4>" . "<a href=\"detailUser.php?nom=".$comment['UID']."\">" .$comment['UID'] . "</a></h4>";
 					echo	"</div>";
 					echo 	"<div class=\"panel-body\">";
 					echo 		$comment['Texte'];
