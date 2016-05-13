@@ -16,9 +16,7 @@
 			
 			<!-- à changer ce truc -> à mettre en php pour afficher "Login" si non connecté -->
 			<ul class="nav navbar-nav">
-				<li><a href="#about">À propos</a></li>
-				<li><a href="#contact">Contact</a></li>
-				
+			
 				<?php
 				
 				// dans le cas dun login

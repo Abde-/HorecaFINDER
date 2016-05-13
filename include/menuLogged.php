@@ -5,12 +5,15 @@
     </a>
     	
 	<ul class="dropdown-menu">
-		<li><a href="#">Action</a></li>
-		<li><a href="#">Another action</a></li>
-		<li><a href="#">Something else here</a></li>
 		<li class="divider"></li>
+
+		<li><a href=
+		<?php 
+			echo "detailUser.php?nom=".$_SESSION['username'];
+		?>
+		>Voir mon compte</a></li>
+		<li><a href="logout.php">Logout</a></li>
 		<li class="dropdown-header">Administration</li>
-		<li><a href="#">Créer nouveau établissement</a></li>
-		<li><a href="#">Voir mes établissements</a></li>
+		<li><a href="admin.php">Créer nouveau établissement</a></li>
 	</ul>
 </li>
