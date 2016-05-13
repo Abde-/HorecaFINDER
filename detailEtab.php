@@ -6,6 +6,12 @@
 		<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 		<title>HorecaFINDER</title>
 		<meta charset="utf-8" />
+    <style>
+      #map {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
 	</head>
 
 	<!-- Bootstrap CSS core -->
@@ -23,12 +29,95 @@
 			include("./include/menus.php");
 		?>
 
+		<?php 
+			function whatIs($database,$nomEtab){
+				// returns restaurant, bar or hotel
+				$requete = $database->query("SELECT COUNT(*) FROM Restaurant R WHERE R.Nom = \"" . $nomEtab . "\"");
+				if ($requete->fetch_assoc()['COUNT(*)'] == 0){
+					$requete = $database->query("SELECT COUNT(*) FROM Bar B WHERE B.Nom = \"" . $nomEtab . "\"");
+					if ($requete->fetch_assoc()['COUNT(*)'] == 0){
+						return "Hotel";
+					}
+					else{
+						return "Bar";
+					}
+				}
+				else{
+					return "Restaurant";
+				}
+			}
+		?>
+
 		<!-- Mettre jumbotron pour info initiale -->
 		<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
+			<header><h3><?php echo $_GET['nom']; ?></h3></header></br>
+			<!-- requete pour données resto -->
+			<?php	
+				$database = new mysqli("localhost","root","","horecafinder");
+				$requete = $database->query("SELECT * FROM Etablissement E WHERE E.Nom = \"".$_GET['nom']."\"" );
+				$info = $requete->fetch_assoc();
+
+				$type = whatIs($database,$_GET['nom']);
+				
+
+				if($type == "Restaurant"){
+					$requete = $database->query("SELECT * FROM Restaurant R WHERE R.Nom = \"" . $_GET['nom'] . "\"");
+					$restoInfo = $requete->fetch_assoc();
+					echo "Restaurant</br>";
+					echo "Prix du plat: " . $restoInfo['FourchettePrixPlat']. "</br>";
+					echo "Places max: " . $restoInfo['PlacesMax'] . "</br>";
+					if ($restoInfo['Emporter']){
+						echo "À emporter</br>";
+					}
+					if ($restoInfo['Livraison']){
+						echo "Livraison</br>";
+					}
+
+				} elseif($type == "Hotel"){
+					$requete = $database->query("SELECT * FROM Hotel H WHERE H.Nom = \"" . $_GET['nom'] . "\"");
+					$hotelInfo = $requete->fetch_assoc();
+					echo "Hotel</br>";
+					echo "Nombre étoiles: " . $hotelInfo['NombreEtoiles'] . "</br>";
+					echo "Nombre chambres: " . $hotelInfo['NombreChambres'] . "</br>";
+					echo "Prix par nuit: " . $hotelInfo['PrixNuit'] . "</br>";
+				} else {
+					$requete = $database->query("SELECT * FROM Bar B WHERE B.Nom = \"" . $_GET['nom'] . "\"");
+					$barInfo = $requete->fetch_assoc();
+					echo "Bar</br>";
+					if($barInfo['Fumeur']){
+						echo "Accepte fumeur.";
+					}
+					if($barInfo['Snack']){
+						echo "Petite restauration.";
+					}
+				}
+			?>
+			
+			<!-- google maps -->
+			<div id="map"></div>
+			<script>
+				function initMap() {
+					var mapDiv = document.getElementById('map');
+					var etabCoord = {lat: <?php echo $info['Coordonnees_Latitude']; ?>,
+								 	 lng: <?php echo $info['Coordonnees_Longitude']; ?>};
+					var map = new google.maps.Map(mapDiv, {
+						center: {lat: <?php echo $info['Coordonnees_Latitude']; ?>,
+								 lng: <?php echo $info['Coordonnees_Longitude']; ?>},
+						zoom: 16
+        			});
+        			var marker = new google.maps.Marker({
+						position: etabCoord,
+						map: map,
+						title: <?php echo "'". $info['Nom']."'"; ?>
+  					});
+      			}
+			</script>
+			<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
+			async defer></script></br>
+
 			<div class="panel-group">
 				<div class="panel panel-default">
-					<div class="panel-body">
-						<header><h3><?php echo $_GET['nom']; ?></h3></header>
+					<div class="panel-body">					
 					</div>
 				</div>
 			</div>

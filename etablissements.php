@@ -108,20 +108,6 @@
 					</div>
 				</div>
 
-				<!-- panel for testing -->
-				<div class="panel panel-default">
-				<div class="panel-heading">
-					testing
-				</div>
-					<div class="panel-body"> 
-						<?php
-							if (isset($_POST['banquet'])){
-								echo $_POST['banquet'];
-							}
-						?>
-					</div>
-				</div>
-
 				<?php
 
 
@@ -197,10 +183,8 @@
 						}
 						$requete .= ")";
 					}
-
 					$requete .= ";";
-					echo $requete;
-
+					
 					$output = $database->query($requete);
 					
 					while($row = $output->fetch_assoc()) {
@@ -251,7 +235,7 @@
 						echo "<div class=\"panel-body\"><i>". $row['Adresse_Rue'] . " " . $row['Adresse_Numero']. "</br>";
 						echo $row['Adresse_CodePostal'] . " ". $row['Adresse_Localite'] . "</i></br></br>";
 						echo "Téléphone: " . $row['Telephone'];
-						echo "<div class = \"pull-right\"><p class=\"text-right\">Crée par <i>".
+						echo "<div class = \"pull-right\"><p class=\"text-right\">Créé par <i>".
 						"<a href=\"detailUser.php?nom=".$row['Createur']."\"></i>" . $row['Createur'] . "</a>"
 						  ." le ". $row['DateCreation']."</p>";
 						echo "</div></div></div>";
