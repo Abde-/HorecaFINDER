@@ -10,7 +10,7 @@
       #map {
         width: 500px;
         height: 400px;
-      }
+    	}
     </style>
 	</head>
 
@@ -27,6 +27,22 @@
 			// ce code va include les menus etc -> à mettre dans chaque page
 			include("./include/entete.php");
 			include("./include/menus.php");
+		?>
+
+
+		<?php
+			//vérification si login pour commentaire
+			$database = new mysqli("localhost","root","","horecafinder");
+
+			if(isset($_SESSION['username'])){	
+				if(isset($_POST['comment']) and ($_POST['comment'] !== "") ){
+					$requete = "INSERT INTO `Commentaire` VALUES (".$_POST['score'].",\"".
+						str_replace("\"","``",$_POST['comment'])."\",".date('Ymd', time()).",\"".$_SESSION['username']."\",\"".
+						$_GET['nom']."\")";
+					echo $requete;
+					$database->query($requete);
+				}
+			}
 		?>
 
 		<?php 
@@ -51,9 +67,9 @@
 		<!-- Mettre jumbotron pour info initiale -->
 		<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
 			<header><h3><?php echo $_GET['nom']; ?></h3></header></br>
+			<div class="panel-body">
 			<!-- requete pour données resto -->
 			<?php	
-				$database = new mysqli("localhost","root","","horecafinder");
 				$requete = $database->query("SELECT * FROM Etablissement E WHERE E.Nom = \"".$_GET['nom']."\"" );
 				$info = $requete->fetch_assoc();
 
@@ -91,15 +107,24 @@
 						echo "Petite restauration.";
 					}
 				}
+				echo "</br>";
+				echo "<i>". $info['Adresse_Rue'] . " " . $info['Adresse_Numero']. "</br>";
+				echo $info['Adresse_CodePostal'] . " ". $info['Adresse_Localite'] . "</i></br></br>";
+				echo "Téléphone: " . $info['Telephone'];
+				echo "<div class = \"pull-right\"><p class=\"text-right\">Créé par <i>".
+					 "<a href=\"detailUser.php?nom=".$info['Createur']."\"></i>" . $info['Createur'] . "</a>"
+					 ." le ". $info['DateCreation']."</p>";
+				echo "</div>";
 			?>
-			
+
+			</br></br>
 			<!-- google maps -->
 			<div id="map"></div>
 			<script>
 				function initMap() {
 					var mapDiv = document.getElementById('map');
 					var etabCoord = {lat: <?php echo $info['Coordonnees_Latitude']; ?>,
-								 	 lng: <?php echo $info['Coordonnees_Longitude']; ?>};
+									 lng: <?php echo $info['Coordonnees_Longitude']; ?>};
 					var map = new google.maps.Map(mapDiv, {
 						center: {lat: <?php echo $info['Coordonnees_Latitude']; ?>,
 								 lng: <?php echo $info['Coordonnees_Longitude']; ?>},
@@ -115,9 +140,57 @@
 			<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
 			async defer></script></br>
 
-			<div class="panel-group">
+
+			<div class="panel-group">				
+				<?php 
+
+				$comments = $database->query("SELECT * FROM Commentaire C WHERE C.Nom = \"" . $info['Nom'] . "\"");
+				while ($comment = $comments->fetch_assoc()){
+					echo "<div class=\"panel panel-default\">";
+					echo 	"<div class=\"panel-heading\">";
+					echo		"<h4>" . $comment['UID'] . "</h4>";
+					echo	"</div>";
+					echo 	"<div class=\"panel-body\">";
+					echo 		$comment['Texte'];
+					echo 	"<div class=\"pull-right\">";
+					
+					$score = $comment['Score'];
+					$index = 0;
+					while($index < $score){
+  						echo "<span class=\"glyphicon glyphicon-star\" aria-hidden=\"true\"></span>";
+  						$index++;
+  					}
+  					while($index < 5){
+  						echo "<span class=\"glyphicon glyphicon-star-empty\" aria-hidden=\"true\"></span>";
+  						$index++;
+  					}
+					echo 		"</br>";
+					echo 		"Le ". $comment['DateCommentaire'];
+					echo 	"</div>"; 
+					echo 	"</div>";
+					echo "</div>";
+				}
+				?>
+
 				<div class="panel panel-default">
-					<div class="panel-body">					
+					<div class="panel-body">
+						<form role="form-inline" method = "post">
+							<div class="form-group">
+								<label for="comment">Comment:</label>
+								<textarea class="form-control" rows="5" id="comment" name="comment"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="score">Score: </label>
+								<select class="form-control" name ="score"id="score">
+								<?php
+									for($i = 0; $i <= 5; $i ++){
+										echo "<option>$i</option>";
+									}
+								?>
+							</select>
+							</br>
+							<button type="submit" class="btn btn-default">Envoyer</button>
+						</form>
 					</div>
 				</div>
 			</div>
