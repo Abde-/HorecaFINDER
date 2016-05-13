@@ -35,7 +35,7 @@
 		<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
 			<div class="jumbotron">
 				<h1>HorecaFINDER</h1> 
-				<p>Bienvenus à votre moteur de recherche d'horeca!</p> 
+				<p>Bienvenus sur votre moteur de recherche d'horeca!</p> 
 			</div>
 		</div>
 
