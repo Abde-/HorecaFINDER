@@ -39,7 +39,6 @@
 					$requete = "INSERT INTO `Commentaire` VALUES (".$_POST['score'].",\"".
 						str_replace("\"","``",$_POST['comment'])."\",".date('Ymd', time()).",\"".$_SESSION['username']."\",\"".
 						$_GET['nom']."\")";
-					echo $requete;
 					$database->query($requete);
 				}
 			}

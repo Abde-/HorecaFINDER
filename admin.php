@@ -2,7 +2,7 @@
  *  Abdeselam El-Haman  et  Cédric Simar
  *  INFO-H-303 : Bases de données - Projet Horeca (partie 2) 
  * 
- *  PHP pour checker le login ou signup de l'user
+ *  PHP pour créer des etablissements
  *	
  -->
 
@@ -30,15 +30,22 @@
 			include("./include/entete.php");
 			include("./include/menus.php");
 		?>
-
-		<!-- Mettre jumbotron pour info initiale -->
 		<div class="col-sm-5 col-sm-offset-2 col-md-10 col-md-offset-2 main">
-			<div class="jumbotron">
-				<h1>HorecaFINDER</h1> 
-				<p>Bienvenus à votre moteur de recherche d'horeca!</p> 
-			</div>
+			<?php
+				if(isset($_SESSION['username'])){
+					$database = new mysqli("localhost","root","","horecafinder");
+					$output = $database->query("SELECT * FROM Administrateur A WHERE A.UID = \"". $_SESSION['username'] . "\"");
+					if($output->fetch_assoc()){
+						include("./include/goodAdmin.php");
+					}
+					else{
+						echo "Vous n'etes pas admin";
+					}
+				} else {
+					echo "vous n'etes pas admin";
+				}
+			?>
 		</div>
-
 		<!-- div extra pour le menu -->
 		</div>
 
