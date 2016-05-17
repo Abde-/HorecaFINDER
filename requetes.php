@@ -87,7 +87,7 @@ AND C.UID <> \"Brenda\"";
 WHERE E.Nom IN 
 	(SELECT C.Nom FROM Commentaire C
 	GROUP BY C.Nom
-	HAVING COUNT(*) < 2)";
+	HAVING COUNT(*) > 1)";
 						  	$output = $database->query($requete);
 						  	
 						  	while ($row = $output->fetch_assoc()){ 
